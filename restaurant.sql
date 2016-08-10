@@ -1,7 +1,8 @@
 /*==============================================================*/
 /* DBMS name:      PostgreSQL 8                                 */
-/* Created on:     30.06.2016 14:47:53                          */
+/* Created on:     06.08.2016 21:16:26                          */
 /*==============================================================*/
+
 
 /*==============================================================*/
 /* Table: action_dic                                            */
@@ -35,6 +36,58 @@ VALUES ('E', 'Viewing');
 /*==============================================================*/
 create unique index action_dic_PK on action_dic (
 action_type
+);
+
+/*==============================================================*/
+/* Table: common_data_dic                                       */
+/*==============================================================*/
+create table common_data_dic (
+   common_data_id       SERIAL               not null,
+   name                 VARCHAR(256)         not null,
+   value                VARCHAR(256)         null,
+   image                BYTEA                null,
+   constraint PK_COMMON_DATA_DIC primary key (common_data_id),
+   constraint AK_U_COMMON_DATA_COMMON_D unique (name)
+);
+
+INSERT INTO common_data_dic
+       (common_data_id, name, value)
+VALUES (1, 'name', 'Hamster');
+INSERT INTO common_data_dic
+       (common_data_id, name)
+VALUES (2, 'emblem');
+INSERT INTO common_data_dic
+       (common_data_id, name, value)
+VALUES (3, 'address', 'New Street, 7');
+INSERT INTO common_data_dic
+       (common_data_id, name, value)
+VALUES (4, 'phone number 1', '+380-44-111-22-33');
+INSERT INTO common_data_dic
+       (common_data_id, name, value)
+VALUES (5, 'phone number 2', '+380-44-111-22-34');
+INSERT INTO common_data_dic
+       (common_data_id, name, value)
+VALUES (6, 'phone number 3', '+380-67-123-45-67');
+INSERT INTO common_data_dic
+       (common_data_id, name, value)
+VALUES (7, 'phone number 4', '+380-93-987-65-34');
+INSERT INTO common_data_dic
+       (common_data_id, name, value)
+VALUES (8, 'e-mail', 'restaurant@hamster.com.ua');
+INSERT INTO common_data_dic
+       (common_data_id, name)
+VALUES (9, 'transport map');
+INSERT INTO common_data_dic
+       (common_data_id, name)
+VALUES (10, 'restaurant schema');
+
+ALTER SEQUENCE common_data_dic_common_data_id_seq RESTART WITH 100;
+
+/*==============================================================*/
+/* Index: common_data_PK                                        */
+/*==============================================================*/
+create unique index common_data_PK on common_data_dic (
+common_data_id
 );
 
 /*==============================================================*/
@@ -79,6 +132,7 @@ create table course (
    name                 VARCHAR(256)         not null,
    weight               FLOAT8               not null,
    cost                 FLOAT8               not null,
+   photo                BYTEA                null,
    constraint PK_COURSE primary key (course_id),
    constraint AK_U_COURSE_COURSE unique (name)
 );
@@ -271,6 +325,7 @@ create table employee (
    second_name          VARCHAR(256)         not null,
    phone_number         VARCHAR(100)         null,
    salary               FLOAT8               null,
+   photo                BYTEA                null,
    dtype                VARCHAR(512)         null,
    constraint PK_EMPLOYEE primary key (employee_id)
 );
@@ -407,7 +462,6 @@ create table job_position_dic (
    constraint PK_JOB_POSITION_DIC primary key (job_position_id),
    constraint AK_U_POSITION_NAME_JOB_POSI unique (name)
 );
-
 
 INSERT INTO job_position_dic
        (job_position_id, name)
@@ -598,10 +652,10 @@ create table portion_dic (
 
 INSERT INTO portion_dic
        (portion_id, portion_type_id, measuring_type_id, amount, description)
-VALUES (1001, 1, 1, null, 'Anything in kilograms');
+VALUES (1001, 1, 1, null, 'kg');
 INSERT INTO portion_dic
        (portion_id, portion_type_id, measuring_type_id, amount, description)
-VALUES (1002, 1, 2, null, 'Anything in litre');
+VALUES (1002, 1, 2, null, 'litre');
 
 INSERT INTO portion_dic
        (portion_id, portion_type_id, measuring_type_id, amount, description)
@@ -946,6 +1000,35 @@ portion_id
 );
 
 /*==============================================================*/
+/* View: v_employee                                             */
+/*==============================================================*/
+create or replace view v_employee as
+SELECT employee.employee_id      AS employee_id,
+       employee.job_position_id  AS job_position_id,
+       employee.first_name       AS first_name,
+       employee.second_name      AS second_name,
+       employee.phone_number     AS phone_number,
+       employee.salary           AS salary,
+       job_position_dic.name     AS job_position_name
+  FROM employee, job_position_dic
+ WHERE (job_position_dic.job_position_id = employee.job_position_id);
+
+/*==============================================================*/
+/* View: v_cook                                                 */
+/*==============================================================*/
+create or replace view v_cook as
+SELECT v_employee.employee_id        AS employee_id,
+       v_employee.job_position_id    AS job_position_id,
+       v_employee.first_name         AS first_name,
+       v_employee.second_name        AS second_name,
+       v_employee.phone_number       AS phone_number,
+       v_employee.salary             AS salary,
+       v_employee.job_position_name  AS job_position_name
+  FROM v_employee
+ WHERE EXISTS(SELECT * FROM cooked_course
+               WHERE (cooked_course.employee_id = v_employee.employee_id));
+
+/*==============================================================*/
 /* View: v_cooked_course                                        */
 /*==============================================================*/
 create or replace view v_cooked_course as
@@ -982,20 +1065,6 @@ SELECT course.course_id                  AS course_id,
   FROM course,
        course_category_dic
  WHERE (course_category_dic.course_category_id = course.course_category_id);
-
-/*==============================================================*/
-/* View: v_employee                                             */
-/*==============================================================*/
-create or replace view v_employee as
-SELECT employee.employee_id      AS employee_id,
-       employee.job_position_id  AS job_position_id,
-       employee.first_name       AS first_name,
-       employee.second_name      AS second_name,
-       employee.phone_number     AS phone_number,
-       employee.salary           AS salary,
-       job_position_dic.name     AS job_position_name
-  FROM employee, job_position_dic
- WHERE (job_position_dic.job_position_id = employee.job_position_id);
 
 /*==============================================================*/
 /* View: v_menu_courses_list                                    */
@@ -1095,21 +1164,6 @@ SELECT v_employee.employee_id        AS employee_id,
   FROM v_employee
  WHERE EXISTS(SELECT * FROM "order"
                WHERE ("order".employee_id = v_employee.employee_id));
-
-/*==============================================================*/
-/* View: v_cook                                                 */
-/*==============================================================*/
-create or replace view v_cook as
-SELECT v_employee.employee_id        AS employee_id,
-       v_employee.job_position_id    AS job_position_id,
-       v_employee.first_name         AS first_name,
-       v_employee.second_name        AS second_name,
-       v_employee.phone_number       AS phone_number,
-       v_employee.salary             AS salary,
-       v_employee.job_position_name  AS job_position_name
-  FROM v_employee
- WHERE EXISTS(SELECT * FROM cooked_course
-               WHERE (cooked_course.employee_id = v_employee.employee_id));
 
 /*==============================================================*/
 /* View: v_warehouse                                            */

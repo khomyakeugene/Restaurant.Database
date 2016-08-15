@@ -1,6 +1,6 @@
 /*==============================================================*/
 /* DBMS name:      PostgreSQL 8                                 */
-/* Created on:     06.08.2016 21:16:26                          */
+/* Created on:     15.08.2016 20:42:45                          */
 /*==============================================================*/
 
 
@@ -142,6 +142,11 @@ INSERT INTO course
        (course_id, course_category_id, name, weight, cost)
 VALUES (4001, 401, 'Chicken with mushrooms, cooked by Ihor Kvilinskyi-s recipe', 0.450, 98.0);
 
+/* Goulash with potato */
+INSERT INTO course
+       (course_id, course_category_id, name, weight, cost)
+VALUES (4002, 401, 'Goulash with potato ', 0.450, 87.0);
+
 /* Beer "Doms", 0.5l bottle */
 INSERT INTO course
        (course_id, course_category_id, name, weight, cost)
@@ -246,7 +251,6 @@ create table course_ingredient (
    constraint PK_COURSE_INGREDIENT primary key (ingredient_id, course_id)
 );
 
-
 /* Chicken with mushrooms, cooked by Ihor Kvilinskyi's recipe */
 /* Chicken fillet, 800g */
 INSERT INTO course_ingredient
@@ -260,10 +264,10 @@ VALUES (4001, 10, 1001, 0.800);
 INSERT INTO course_ingredient
        (course_id, ingredient_id, portion_id, amount)
 VALUES (4001, 2, 1001, 0.400);
-/* Sunflower oil */
+/* Refined sunflower oil, 0.15l */
 INSERT INTO course_ingredient
-       (course_id, ingredient_id)
-VALUES (4001, 301);
+       (course_id, ingredient_id, portion_id, amount)
+VALUES (4001, 301, 4006, 0.150);
 /* Salt */
 INSERT INTO course_ingredient
        (course_id, ingredient_id)
@@ -278,8 +282,38 @@ INSERT INTO course_ingredient
 VALUES (4001, 121);
 /* Bay leaf */
 INSERT INTO course_ingredient
-       (course_id, ingredient_id)
-VALUES (4001, 141);
+       (course_id, ingredient_id, portion_id, amount)
+VALUES (4001, 141, 1001, 0.001);
+
+/* Goulash with potato */
+/* Pork, 500g */
+INSERT INTO course_ingredient
+       (course_id, ingredient_id, portion_id, amount)
+VALUES (4002, 501, 1001, 0.500);
+/* Potato, 1kg */
+INSERT INTO course_ingredient
+       (course_id, ingredient_id, portion_id, amount)
+VALUES (4002, 1, 1001, 1.0);
+/* White salad leek, 400g */
+INSERT INTO course_ingredient
+       (course_id, ingredient_id, portion_id, amount)
+VALUES (4002, 11, 1001, 0.400);
+/* Wheat flour */
+INSERT INTO course_ingredient
+       (course_id, ingredient_id, portion_id, amount)
+VALUES (4002, 1001, 1001, 0.015);
+/* Bay leaf, 1g */
+INSERT INTO course_ingredient
+       (course_id, ingredient_id, portion_id, amount)
+VALUES (4002, 141, 1001, 0.001);
+/* Tomato paste, 80g */
+INSERT INTO course_ingredient
+       (course_id, ingredient_id, portion_id, amount)
+VALUES (4002, 305, 1001, 0.080);
+/* Refined sunflower oil, 0.1l */
+INSERT INTO course_ingredient
+       (course_id, ingredient_id, portion_id, amount)
+VALUES (4002, 301, 4006, 0.100);
 
 /* Beer "Doms", 0.5l bottle */
 INSERT INTO course_ingredient
@@ -367,7 +401,6 @@ create table ingredient (
    constraint AK_U_INGREDIENT_INGREDIE unique (name)
 );
 
-
 INSERT INTO ingredient
        (ingredient_id, name)
 VALUES (1, 'Potato');
@@ -398,6 +431,12 @@ VALUES (9, 'Pe-tsai');
 INSERT INTO ingredient
        (ingredient_id, name)
 VALUES (10, 'Champignon');
+INSERT INTO ingredient
+       (ingredient_id, name)
+VALUES (11, 'White salad leek');
+INSERT INTO ingredient
+       (ingredient_id, name)
+VALUES (12, 'Red salad leek');
 
 INSERT INTO ingredient
        (ingredient_id, name)
@@ -427,13 +466,19 @@ VALUES (201, 'Butter');
 
 INSERT INTO ingredient
        (ingredient_id, name)
-VALUES (301, 'Sunflower oil');
+VALUES (301, 'Refined sunflower oil');
 INSERT INTO ingredient
        (ingredient_id, name)
-VALUES (302, 'Olive oil');
+VALUES (302, 'Sunflower oil');
 INSERT INTO ingredient
        (ingredient_id, name)
-VALUES (303, 'Vinegar');
+VALUES (303, 'Olive oil');
+INSERT INTO ingredient
+       (ingredient_id, name)
+VALUES (304, 'Vinegar');
+INSERT INTO ingredient
+       (ingredient_id, name)
+VALUES (305, 'Tomato paste');
 
 INSERT INTO ingredient
        (ingredient_id, name)
@@ -441,9 +486,18 @@ VALUES (401, 'Chicken fillet');
 
 INSERT INTO ingredient
        (ingredient_id, name)
+VALUES (501, 'Pork');
+
+INSERT INTO ingredient
+       (ingredient_id, name)
+VALUES (1001, 'Wheat flour');
+
+/* --------------------------------------------------------------- */
+INSERT INTO ingredient
+       (ingredient_id, name)
 VALUES (10001, 'Beer "Doms"');
 
-
+/* --------------------------------------------------------------- */
 ALTER SEQUENCE ingredient_ingredient_id_seq RESTART WITH 20001;
 
 /*==============================================================*/
@@ -532,9 +586,12 @@ create table menu (
 INSERT INTO menu
        (menu_id, name)
 VALUES (1, 'Our first very simple trial menu');
+INSERT INTO menu
+       (menu_id, name)
+VALUES (2, 'Our second simple menu');
 
-
-ALTER SEQUENCE menu_menu_id_seq RESTART WITH 2;
+/* ------------------------------------------------------------- */
+ALTER SEQUENCE menu_menu_id_seq RESTART WITH 101;
 
 
 /*==============================================================*/
@@ -552,6 +609,26 @@ create table menu_course (
    menu_id              INT4                 not null,
    constraint PK_MENU_COURSE primary key (course_id, menu_id)
 );
+
+/* Our first very simple trial menu */
+/* Chicken with mushrooms, cooked by Ihor Kvilinskyi's recipe */
+INSERT INTO menu_course
+       (course_id, menu_id)
+VALUES (4001, 1);
+/* Beer "Doms", 0.5l bottle */
+INSERT INTO menu_course
+       (course_id, menu_id)
+VALUES (10001, 1);
+
+/* Our second simple menu */
+/* Goulash with potato */
+INSERT INTO menu_course
+       (course_id, menu_id)
+VALUES (4002, 2);
+/* Beer "Doms", 0.5l bottle */
+INSERT INTO menu_course
+       (course_id, menu_id)
+VALUES (10001, 2);
 
 /*==============================================================*/
 /* Index: menu_course_PK                                        */
@@ -956,7 +1033,6 @@ create table warehouse (
    constraint PK_WAREHOUSE primary key (ingredient_id, portion_id)
 );
 
-
 /* Champignon mushroom, measurable in kilos */
 INSERT INTO warehouse
        (ingredient_id, portion_id, amount)
@@ -972,7 +1048,7 @@ INSERT INTO warehouse
        (ingredient_id, portion_id, amount)
 VALUES (111, 2002, 300.0);
 
-/* Sunflower oil, measurable in 1l bottle */
+/* Refined sunflower oil, measurable in 1l bottle */
 INSERT INTO warehouse
        (ingredient_id, portion_id, amount)
 VALUES (301, 4006, 700.0);
@@ -981,6 +1057,11 @@ VALUES (301, 4006, 700.0);
 INSERT INTO warehouse
        (ingredient_id, portion_id, amount)
 VALUES (401, 1001, 50.0);
+
+/* Pork, measurable in kilos */
+INSERT INTO warehouse
+       (ingredient_id, portion_id, amount)
+VALUES (501, 1001, 100.0);
 
 /* Bay leaf, measurable in 5g packing */
 INSERT INTO warehouse

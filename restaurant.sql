@@ -1,6 +1,6 @@
 /*==============================================================*/
 /* DBMS name:      PostgreSQL 8                                 */
-/* Created on:     15.08.2016 20:42:45                          */
+/* Created on:     17.08.2016 14:37:17                          */
 /*==============================================================*/
 
 
@@ -137,6 +137,11 @@ create table course (
    constraint AK_U_COURSE_COURSE unique (name)
 );
 
+/* Shopska salad */
+INSERT INTO course
+       (course_id, course_category_id, name, weight, cost)
+VALUES (2001, 201, 'Shopska salad', 0.350, 45.0);
+
 /* Chicken with mushrooms, cooked by Ihor Kvilinskyi's recipe */
 INSERT INTO course
        (course_id, course_category_id, name, weight, cost)
@@ -250,6 +255,44 @@ create table course_ingredient (
    amount               FLOAT8               null,
    constraint PK_COURSE_INGREDIENT primary key (ingredient_id, course_id)
 );
+
+/* Shopska salad */
+/* Tomato, 400g */
+INSERT INTO course_ingredient
+       (course_id, ingredient_id, portion_id, amount)
+VALUES (2001, 5, 1001, 0.400);
+/* Cucumber 300g */
+INSERT INTO course_ingredient
+       (course_id, ingredient_id, portion_id, amount)
+VALUES (2001, 6, 1001, 0.300);
+/* White salad leek 100g */
+INSERT INTO course_ingredient
+       (course_id, ingredient_id, portion_id, amount)
+VALUES (2001, 11, 1001, 0.100);
+/* Сapsicum (Болгарський перець), 400g */
+INSERT INTO course_ingredient
+       (course_id, ingredient_id, portion_id, amount)
+VALUES (2001, 13, 1001, 0.400);
+/* Brynza, 300g */
+INSERT INTO course_ingredient
+       (course_id, ingredient_id, portion_id, amount)
+VALUES (2001, 601, 1001, 0.300);
+/* Olive oil 70ml */
+INSERT INTO course_ingredient
+       (course_id, ingredient_id, portion_id, amount)
+VALUES (2001, 303, 1002, 0.070);
+/* Salt */
+INSERT INTO course_ingredient
+       (course_id, ingredient_id)
+VALUES (2001, 101);
+/* Black pepper */
+INSERT INTO course_ingredient
+       (course_id, ingredient_id)
+VALUES (2001, 121);
+/* Grape vinegar, 20ml */
+INSERT INTO course_ingredient
+       (course_id, ingredient_id, portion_id, amount)
+VALUES (2001, 306, 1002, 0.020);
 
 /* Chicken with mushrooms, cooked by Ihor Kvilinskyi's recipe */
 /* Chicken fillet, 800g */
@@ -437,6 +480,10 @@ VALUES (11, 'White salad leek');
 INSERT INTO ingredient
        (ingredient_id, name)
 VALUES (12, 'Red salad leek');
+/* Болгарський перець */
+INSERT INTO ingredient
+       (ingredient_id, name)
+VALUES (13, 'Сapsicum');
 
 INSERT INTO ingredient
        (ingredient_id, name)
@@ -479,6 +526,9 @@ VALUES (304, 'Vinegar');
 INSERT INTO ingredient
        (ingredient_id, name)
 VALUES (305, 'Tomato paste');
+INSERT INTO ingredient
+       (ingredient_id, name)
+VALUES (306, 'Grape vinegar');
 
 INSERT INTO ingredient
        (ingredient_id, name)
@@ -487,6 +537,11 @@ VALUES (401, 'Chicken fillet');
 INSERT INTO ingredient
        (ingredient_id, name)
 VALUES (501, 'Pork');
+
+/* Brynza */
+INSERT INTO ingredient
+       (ingredient_id, name)
+VALUES (601, 'Sheep cheese');
 
 INSERT INTO ingredient
        (ingredient_id, name)
@@ -611,6 +666,10 @@ create table menu_course (
 );
 
 /* Our first very simple trial menu */
+/* Shopska salad */
+INSERT INTO menu_course
+       (course_id, menu_id)
+VALUES (2001, 1);
 /* Chicken with mushrooms, cooked by Ihor Kvilinskyi's recipe */
 INSERT INTO menu_course
        (course_id, menu_id)

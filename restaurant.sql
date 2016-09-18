@@ -1,9 +1,7 @@
 /*==============================================================*/
 /* DBMS name:      PostgreSQL 8                                 */
-/* Created on:     17.08.2016 14:37:17                          */
+/* Created on:     10.09.2016 10:36:05                          */
 /*==============================================================*/
-
-
 /*==============================================================*/
 /* Table: action_dic                                            */
 /*==============================================================*/
@@ -483,7 +481,7 @@ VALUES (12, 'Red salad leek');
 /* Болгарський перець */
 INSERT INTO ingredient
        (ingredient_id, name)
-VALUES (13, 'Сapsicum');
+VALUES (13, 'Capsicum');
 
 INSERT INTO ingredient
        (ingredient_id, name)
@@ -753,6 +751,13 @@ state_type
 );
 
 /*==============================================================*/
+/* Index: order_datetime_idx                                    */
+/*==============================================================*/
+create  index order_datetime_idx on "order" (
+order_datetime
+);
+
+/*==============================================================*/
 /* Table: order_course                                          */
 /*==============================================================*/
 create table order_course (
@@ -783,7 +788,8 @@ create table portion_dic (
    measuring_type_id    INT4                 not null,
    amount               FLOAT8               null,
    description          VARCHAR(256)         not null,
-   constraint PK_PORTION_DIC primary key (portion_id)
+   constraint PK_PORTION_DIC primary key (portion_id),
+   constraint AK_AK_PORTION_U_PORTION_ unique (description)
 );
 
 INSERT INTO portion_dic
